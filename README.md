@@ -13,7 +13,7 @@ Currently, the supported platforms are:
 
 * **Linux** 
 * **MacOS**
-* **Windows**
+* **Windows**: builds, but at the moment crashes on launch.
 
 
 ## Installation
@@ -25,6 +25,9 @@ cmake -Bbuild -DCMAKE_INSTALL_PREFIX="$(mads -p)"
 cmake --build build -j4
 sudo cmake --install build
 ```
+
+Note that you neeed to have installed both Python and NumPy.
+
 
 Windows:
 
