@@ -104,6 +104,7 @@ else()
   set(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib;/usr/local/lib")
 endif()
 include_directories(${json_SOURCE_DIR}/include)
+add_definitions(-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
 
 # These plugins are always build and use for testing
 add_plugin(python_source LIBS cppy3)

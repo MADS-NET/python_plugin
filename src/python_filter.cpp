@@ -17,8 +17,8 @@
 #include <nlohmann/json.hpp>
 #include <pugg/Kernel.h>
 // other includes as needed here
-#include <cppy3/cppy3.hpp>
-#include <cppy3/utils.hpp>
+#include "common.hpp"
+
 
 // Define the name of the plugin
 #ifndef PLUGIN_NAME
@@ -31,15 +31,23 @@ using json = nlohmann::json;
 
 // Plugin class. This shall be the only part that needs to be modified,
 // implementing the actual functionality
-class PythonFilterPlugin : public Filter<json, json> {
+class PythonFilterPlugin : public Filter<json, json>,
+                           public MADS::PythonPlugin {
 
 public:
   // Typically, no need to change this
   string kind() override { return PLUGIN_NAME; }
 
   return_type load_data(json const &input, string topic = "") override {
-    cppy3::exec("MADS.load_data(" + input.dump() + ")");
-    cout << "Loaded data: " << input.dump() << endl;
+    string load_topic = "mads.topic = '" + topic + "'";
+    string load_data = "mads.data = " + input.dump();
+    try {
+      cppy3::exec(load_topic);
+      cppy3::exec(load_data);
+    } catch (cppy3::PythonException &e) {
+      cerr << "Error loading data: " << e.what();
+      return return_type::error;
+    }
     return return_type::success;
   }
 
@@ -51,63 +59,39 @@ public:
 
     cppy3::Var result;
     try {
-      result = cppy3::exec("MADS.process()");
+      result = cppy3::eval("mads.process()");
       out = json::parse(result.toString());
     } catch (cppy3::PythonException &e) {
       cerr << "Error processing data: " << e.what();
       return return_type::error;
     } catch (nlohmann::json::exception &e) {
       cerr << "Error parsing result: " << cppy3::WideToUTF8(result.toString())
-           << endl << e.what();
+           << endl
+           << e.what();
       return return_type::error;
     }
-    
+
     return return_type::success;
   }
 
   void set_params(void const *params) override {
     Filter::set_params(params);
-    _params["script_file"] = "filter.py";
+    _params["python_module"] = "filter";
+    _params["search_paths"] = json::array();
     _params.merge_patch(*(json *)params);
-    _script_file = _params["script_file"].get<string>();
-
-    prepare_python();
-  }
-
-  void prepare_python() {
-    cppy3::eval(R"(
-import json
-class MADS_base:
-  data = {}
-
-  def __init__(self):
-    print("Note that there is typically no need to instantiate MADS class")
-  
-  @classmethod
-  def load_data(cls, data_str):
-    print("Loading data: ", data_str)
-    # cls.data = json.loads(data_str)
-    cls.data = {"AX": 1, "AY": 2, "AZ": 3}
-
-  @classmethod
-  def process(cls):
-    raise Exception("This method must be implemented in the MADS class")
-
-)");
-    try {
-      cppy3::execScriptFile(_script_file);
-    } catch (cppy3::PythonException &e) {
-      cerr << "Error loading python script " << _script_file << ": "
-           << e.what();
-      exit(EXIT_FAILURE);
+    for (auto &path : _params["search_paths"]) {
+      _default_paths.push_back(path.get<string>());
     }
+    _python_module = _params["python_module"].get<string>();
+
+    prepare_python(_python_module);
   }
 
-  map<string, string> info() override { return {}; };
+  map<string, string> info() override {
+    return {{"module", _python_module}}; 
+  };
 
 private:
-  cppy3::PythonVM _python;
-  string _script_file;
 };
 
 /*
@@ -136,9 +120,9 @@ int main(int argc, char const *argv[]) {
   json input, output;
 
   // Set example values to params
-  params["script_file"] = "python/filter.py";
+  params["python_module"] = "filter";
   if (argc > 1) {
-    params["script_file"] = argv[1];
+    params["python_module"] = argv[1];
   }
 
   // Set the parameters
@@ -146,14 +130,16 @@ int main(int argc, char const *argv[]) {
 
   // Set input data
   input["data"] = {{"AX", 1}, {"AY", 2}, {"AZ", 3}};
+  input["data"]["ary"] = {1, 2, 3};
+  input["data"]["string"] = "Hello, World!";
 
   // Set input data
-  plugin.load_data(input);
-  cout << "Input: " << input.dump(2) << endl;
+  plugin.load_data(input, "test_topic");
+  cout << "[C++] Input: " << input.dump(2) << endl;
 
   // Process data
   plugin.process(output);
-  cout << "Output: " << output.dump(2) << endl;
+  cout << "[C++] Output: " << output.dump(2) << endl;
 
   return 0;
 }
