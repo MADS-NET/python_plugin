@@ -44,6 +44,7 @@ public:
     try {
       cppy3::exec(load_topic);
       cppy3::exec(load_data);
+      cppy3::exec("mads.deal_with_data()");
     } catch (cppy3::PythonException &e) {
       cerr << "Error loading data: " << e.what();
       return return_type::error;
@@ -61,7 +62,7 @@ public:
     }
     _python_module = _params["python_module"].get<string>();
 
-    prepare_python(_python_module);
+    prepare_python();
   }
 
 
@@ -109,6 +110,7 @@ int main(int argc, char const *argv[]) {
   // Set the parameters
   plugin.set_params(&params);
 
+  input["key"] = "value";
   // Process data
   plugin.load_data(input);
 

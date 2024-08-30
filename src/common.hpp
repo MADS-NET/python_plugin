@@ -13,12 +13,17 @@ namespace MADS {
 
 class PythonPlugin {
 public:
-  void prepare_python(std::string module) {
+  void prepare_python() {
     cppy3::exec("import sys");
     for (auto &path : _default_paths) {
       cppy3::exec("sys.path.append('" + path + "')");
     }
-    cppy3::exec("import " + _python_module + " as mads");
+    try {
+      cppy3::exec("import " + _python_module + " as mads");
+    } catch (cppy3::PythonException &e) {
+      std::cerr << "Error loading module: " << e.what();
+      exit(EXIT_FAILURE);
+    }
     cppy3::exec(R"(
 mads.data = {}
 mads.topic = ''

@@ -84,7 +84,7 @@ public:
     }
     _python_module = _params["python_module"].get<string>();
 
-    prepare_python(_python_module);
+    prepare_python();
   }
 
   map<string, string> info() override {
