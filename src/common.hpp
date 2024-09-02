@@ -1,4 +1,12 @@
-
+/*
+   ____                                      
+  / ___|___  _ __ ___  _ __ ___   ___  _ __  
+ | |   / _ \| '_ ` _ \| '_ ` _ \ / _ \| '_ \ 
+ | |__| (_) | | | | | | | | | | | (_) | | | |
+  \____\___/|_| |_| |_|_| |_| |_|\___/|_| |_|
+                                             
+Common header for source, filter and sink python plugins
+*/
 #include <string>
 #include <vector>
 #include <cppy3/cppy3.hpp>

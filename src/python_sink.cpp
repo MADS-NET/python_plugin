@@ -112,7 +112,7 @@ int main(int argc, char const *argv[]) {
 
   input["key"] = "value";
   // Process data
-  plugin.load_data(input);
+  plugin.load_data(input, "test_topic");
 
   return 0;
 }
