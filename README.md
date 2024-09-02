@@ -13,7 +13,11 @@ Currently, the supported platforms are:
 
 * **Linux** 
 * **MacOS**
-* **Windows**: builds, but at the moment crashes on launch.
+* **Windows**
+
+**Note**: you also need to have NumPy installed.
+
+**Note**: On windows, I have only tested the situation when Python 3.12 has been installed by checking the install option **install for all computer users**.
 
 
 ## Installation
