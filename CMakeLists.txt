@@ -47,12 +47,6 @@ FetchContent_Declare(json
   GIT_SHALLOW    TRUE
 )
 
-FetchContent_Declare(plugin 
-  GIT_REPOSITORY https://github.com/pbosetti/mads_plugin.git
-  GIT_TAG        HEAD
-  GIT_SHALLOW    TRUE
-)
-
 FetchContent_Declare(cppy3 
   GIT_REPOSITORY https://github.com/pbosetti/cppy3.git
   GIT_TAG        HEAD
@@ -60,7 +54,13 @@ FetchContent_Declare(cppy3
 )
 
 FetchContent_MakeAvailable(pugg json cppy3)
-FetchContent_Populate(plugin)
+
+FetchContent_Populate(plugin 
+  GIT_REPOSITORY https://github.com/pbosetti/mads_plugin.git
+  GIT_TAG        HEAD
+  GIT_SHALLOW    TRUE
+)
+
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 include_directories(${plugin_SOURCE_DIR}/src)
