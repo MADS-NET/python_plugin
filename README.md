@@ -48,14 +48,17 @@ The plugin supports the following settings in the INI file:
 
 ```ini
 [python_source]
+venv = "/path/to/venv"
 python_module = "source"
 search_paths = []
 
 [python_filter]
+venv = "/path/to/venv"
 python_module = "filter"
 search_paths = []
 
 [python_sink]
+venv = "/path/to/venv"
 python_module = "sink"
 search_paths = []
 ```
@@ -93,5 +96,10 @@ The python script **must implement** the function `process()`, which is called b
 
 The python script **must implement** the function `deal_with_data()`, which is called by the plugin for each payload. The function must return nothing and can access the dictionary `data` and the string `topic`.
 
+## Python virtual environment
+
+If you need to use third party Python libraries installed with pip in a virtual environment, you can pass the path to the `venv` folder as the `venv` setting in the INI file. The plugin will activate the virtual environment before running the Python script, so that you can use the libraries installed in the virtual environment with the usual `import` statement.
+
+The test executables automatically detect the `venv` path from the `VIRTUAL_ENV` envoronment variable and set the `venv` setting accordingly. In turn , `VIRTUAL_ENV` is usually set by executing the `activate` script in the virtual environment folder.
 
 ---

@@ -1,4 +1,3 @@
-import json
 
 # This is a mandatory function that must be implemented in the script.
 # The function needs to deal with the global variable 'data', 

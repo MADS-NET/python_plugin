@@ -51,10 +51,10 @@ public:
       cout << "Result: " << cppy3::WideToUTF8(result.toString()) << endl;
       out = json::parse(result.toString());
     } catch (cppy3::PythonException &e) {
-      cerr << "Error processing data: " << e.what();
+      cerr << "[Python] Error processing data: " << e.what();
       return return_type::error;
     } catch (nlohmann::json::exception &e) {
-      cerr << "Error parsing result: " << cppy3::WideToUTF8(result.toString())
+      cerr << "[Python] Error parsing result: " << cppy3::WideToUTF8(result.toString())
            << endl
            << e.what();
       return return_type::error;
@@ -67,13 +67,20 @@ public:
     Source::set_params(params);
     _params["python_module"] = "source";
     _params["search_paths"] = json::array();
+    _params["venv"] = "";
     _params.merge_patch(*(json *)params);
     for (auto &path : _params["search_paths"]) {
       _default_paths.push_back(path.get<string>());
     }
     _python_module = _params["python_module"].get<string>();
-
-    prepare_python();
+    
+    try {
+      setup_venv(_params);
+    } catch (exception &e) {
+      cerr << "[Python] Error preparing Python: " << e.what();
+      exit(EXIT_FAILURE);
+    }
+    prepare_python(_params);
   }
 
 
@@ -104,11 +111,19 @@ INSTALL_SOURCE_DRIVER(PythonSourcePlugin, json)
 
 For testing purposes, when directly executing the plugin
 */
+
+#include <cstdlib>
+
 int main(int argc, char const *argv[]) {
   PythonSourcePlugin plugin;
   json output, params;
 
   // Set example values to params
+  char *venv_path = getenv("VIRTUAL_ENV");
+  if (strlen(venv_path) > 0) {
+    cerr << "Using virtual environment from VIRTUAL_ENV shell var: " << venv_path << endl;
+    params["venv"] = venv_path;
+  }
   params["python_module"] = "source";
   if (argc > 1) {
     params["python_module"] = argv[1];

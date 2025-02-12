@@ -39,14 +39,14 @@ public:
   string kind() override { return PLUGIN_NAME; }
 
   return_type load_data(json const &input, string topic = "") override {
-    string load_topic = "mads.topic = '" + topic + "'";
-    string load_data = "mads.data = " + input.dump();
+    string const load_topic = "mads.topic = '" + topic + "'";
+    string const load_data = "mads.data = " + input.dump();
     try {
       cppy3::exec(load_topic);
       cppy3::exec(load_data);
       cppy3::exec("mads.deal_with_data()");
     } catch (cppy3::PythonException &e) {
-      cerr << "Error loading data: " << e.what();
+      cerr << "[Python] Error loading data: " << e.what();
       return return_type::error;
     }
     return return_type::success;
@@ -56,13 +56,20 @@ public:
     Sink::set_params(params);
     _params["python_module"] = "sink";
     _params["search_paths"] = json::array();
+    _params["venv"] = "";
     _params.merge_patch(*(json *)params);
     for (auto &path : _params["search_paths"]) {
       _default_paths.push_back(path.get<string>());
     }
     _python_module = _params["python_module"].get<string>();
 
-    prepare_python();
+    try {
+      setup_venv(_params);
+    } catch (exception &e) {
+      cerr << "[Python] Error preparing Python: " << e.what();
+      exit(EXIT_FAILURE);
+    }
+    prepare_python(_params);
   }
 
 
@@ -97,11 +104,19 @@ INSTALL_SINK_DRIVER(PythonSinkPlugin, json)
 
 For testing purposes, when directly executing the plugin
 */
+
+#include <cstdlib>
+
 int main(int argc, char const *argv[]) {
   PythonSinkPlugin plugin;
   json input, params;
   
   // Set example values to params
+  char *venv_path = getenv("VIRTUAL_ENV");
+  if (strlen(venv_path) > 0) {
+    cerr << "Using virtual environment from VIRTUAL_ENV shell var: " << venv_path << endl;
+    params["venv"] = venv_path;
+  }
   params["python_module"] = "sink";
   if (argc > 1) {
     params["python_module"] = argv[1];
