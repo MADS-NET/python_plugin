@@ -41,9 +41,15 @@ public:
     cppy3::exec(R"(
 import json
 mads.data = {}
+mads.state = {}
 mads.topic = ''
     )");
     cppy3::exec("mads.params = json.loads('" + params.dump() + "')");
+    try {
+      cppy3::exec("mads.setup()");
+    } catch (cppy3::PythonException &e) {
+      std::cerr << "[Python] running setup(): " << e.what();
+    }
   }
 
   void setup_venv(json const &params) {
@@ -68,6 +74,7 @@ mads.topic = ''
       cppy3::exec("site.addsitedir('" + site_packages.string() + "')");
     } 
   }
+
 
 protected:
   cppy3::PythonVM _python;

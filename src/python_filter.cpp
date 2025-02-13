@@ -56,7 +56,6 @@ public:
 
     if (!_agent_id.empty())
       out["agent_id"] = _agent_id;
-
     cppy3::Var result;
     try {
       result = cppy3::eval("mads.process()");
@@ -135,6 +134,8 @@ int main(int argc, char const *argv[]) {
     params["venv"] = venv_path;
   }
   params["python_module"] = "filter";
+  params["port"] = "COM3";
+  params["baudrate"] = 115600;
   if (argc > 1) {
     params["python_module"] = argv[1];
   }
