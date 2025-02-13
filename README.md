@@ -80,7 +80,11 @@ All settings are optional; if omitted, the default values are used. Note, howeve
 
 ## python details
 
+The python script is loaded as a module, and the plugin calls the functions defined in the module.
+
 The python module script has the package search list set to the standard search paths, plus the same directories above detailed, where python scripts are loaded. If you need an additional library or scripts, just put it in one of those dirs and require it.
+
+The first function to be called is setup(), which is called once when the script is loaded. The function returns nothing. This function is optional, and it is typically used to setup some internal state, like storing a serial port object or a database connection. Any object created here must be stopped in the `state` dictionary, so that it can be accessed by the other functions.
 
 The python script module implicitly has access to the global variables `data` and `topic`, which are the payload and topic, respectively. It **must implement** the following functions, depending on the plugin type:
 
