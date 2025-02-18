@@ -106,4 +106,41 @@ If you need to use third party Python libraries installed with pip in a virtual 
 
 The test executables automatically detect the `venv` path from the `VIRTUAL_ENV` envoronment variable and set the `venv` setting accordingly. In turn , `VIRTUAL_ENV` is usually set by executing the `activate` script in the virtual environment folder.
 
+### Example: serial port reader
+
+As an example, the script `python/serial_in.py` shows as to read from a serial port. The script uses the `pyserial` library, which is not installed by default. To install it, you can create a virtual environment and install the library with pip:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install pyserial
+```
+
+The plugin will automatically activate the virtual environment before running the script, so you can use the library with the usual `import` statement.
+
+The script `python/serial_in.py` implements two functions: the `setup()` function, which is called once at the startup and opens the serial port and stores it into the special `state` dictionary:
+
+```python
+def setup():
+  print("[Python] Setting up filter...")
+  print("[Python] Parameters: " + json.dumps(params))
+  state["sp"] = serial.Serial(params["port"], params["baudrate"])
+```
+
+Note that the `params` dictionary must contain the parameters `port` and `baudrate`.
+
+The second function is the `get_output()` function, which reads from the serial port and returns the data. It is supposed to be repeatedly called by the source plugin:
+
+```python
+def get_output():
+  line = state["sp"].readline().decode('utf-8').strip()
+  try:
+    line = json.loads(line)
+  except json.JSONDecodeError:
+    line = {"error": "Invalid JSON"}
+  return json.dumps(line)
+```
+
+You can test the plugin with the custom executable `python_source_sp`, which takes as an argument the path to the serial port (unixes) or the COM port (windows). The executable will read from the serial port and print the data to the console, until you press `Ctrl+C`.
+
 ---

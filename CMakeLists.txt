@@ -111,6 +111,10 @@ add_plugin(python_source LIBS cppy3)
 add_plugin(python_filter LIBS cppy3)
 add_plugin(python_sink LIBS cppy3)
 
+add_executable(python_source_sp ${SRC_DIR}/python_source.cpp)
+target_link_libraries(python_source_sp PRIVATE pugg cppy3)
+target_compile_definitions(python_source_sp PRIVATE ENABLE_SERIALPORT=1)
+
 
 # INSTALL ######################################################################
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)

@@ -48,7 +48,7 @@ public:
     cppy3::Var result;
     try {
       result = cppy3::eval("mads.get_output()");
-      cout << "Result: " << cppy3::WideToUTF8(result.toString()) << endl;
+      // cout << "Result: " << cppy3::WideToUTF8(result.toString()) << endl;
       out = json::parse(result.toString());
     } catch (cppy3::PythonException &e) {
       cerr << "[Python] Error processing data: " << e.what();
@@ -114,6 +114,39 @@ For testing purposes, when directly executing the plugin
 
 #include <cstdlib>
 
+#ifdef ENABLE_SERIALPORT
+
+int main(int argc, char const *argv[]) {
+  PythonSourcePlugin plugin;
+  json output, params;
+
+  // Set example values to params
+  char *venv_path = getenv("VIRTUAL_ENV");
+  if (strlen(venv_path) > 0) {
+    cerr << "Using virtual environment from VIRTUAL_ENV shell var: " << venv_path << endl;
+    params["venv"] = venv_path;
+  }
+  params["python_module"] = "serial_in";
+  if (argc < 2) {
+    cerr << "Usage: " << argv[0] << " <serial_port>" << endl;
+    return 1;
+  }
+  params["port"] = argv[1];
+  params["baudrate"] = 115200;
+
+  // Set the parameters
+  plugin.set_params(&params);
+
+  while (true) {
+    plugin.get_output(output);
+    cout << "[C++] Output: " << output.dump(2) << endl;
+  }
+
+  return 0;
+}
+
+#else
+
 int main(int argc, char const *argv[]) {
   PythonSourcePlugin plugin;
   json output, params;
@@ -140,3 +173,5 @@ int main(int argc, char const *argv[]) {
 
   return 0;
 }
+
+#endif
