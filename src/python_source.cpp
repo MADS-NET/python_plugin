@@ -125,6 +125,8 @@ int main(int argc, char const *argv[]) {
   if (venv_path && strlen(venv_path) > 0) {
     cerr << "Using virtual environment from VIRTUAL_ENV shell var: " << venv_path << endl;
     params["venv"] = venv_path;
+  } else {
+    cerr << "No virtual environment found. Using system Python." << endl;
   }
   params["python_module"] = "serial_in";
   if (argc < 2) {
@@ -156,6 +158,8 @@ int main(int argc, char const *argv[]) {
   if (venv_path && strlen(venv_path) > 0) {
     cerr << "Using virtual environment from VIRTUAL_ENV shell var: " << venv_path << endl;
     params["venv"] = venv_path;
+  } else {
+    cerr << "No virtual environment found. Using system Python." << endl;
   }
   params["python_module"] = "source";
   if (argc > 1) {
