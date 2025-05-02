@@ -122,7 +122,7 @@ int main(int argc, char const *argv[]) {
 
   // Set example values to params
   char *venv_path = getenv("VIRTUAL_ENV");
-  if (strlen(venv_path) > 0) {
+  if (venv_path && strlen(venv_path) > 0) {
     cerr << "Using virtual environment from VIRTUAL_ENV shell var: " << venv_path << endl;
     params["venv"] = venv_path;
   }
@@ -153,7 +153,7 @@ int main(int argc, char const *argv[]) {
 
   // Set example values to params
   char *venv_path = getenv("VIRTUAL_ENV");
-  if (strlen(venv_path) > 0) {
+  if (venv_path && strlen(venv_path) > 0) {
     cerr << "Using virtual environment from VIRTUAL_ENV shell var: " << venv_path << endl;
     params["venv"] = venv_path;
   }
