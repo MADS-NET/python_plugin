@@ -58,6 +58,7 @@ mads.topic = ''
     } else if (!exists(params["venv"].get<path>())) {
       throw std::runtime_error("Virtual environment does not exist: " + params["venv"].get<std::string>());
     } else {
+      std::cerr << "[Python] Using virtual environment: " << params["venv"].get<std::string>() << std::endl;
       path venv = params["venv"].get<path>();
       path lib = venv / "lib";
       path site_packages;
