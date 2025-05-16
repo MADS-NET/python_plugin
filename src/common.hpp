@@ -52,13 +52,21 @@ mads.topic = ''
     }
   }
 
-  void setup_venv(json const &params) {
+  void setup_venv(json &params) {
     if (params["venv"].is_null() || params["venv"].get<std::string>().empty()) {
-      std::cerr << "[Python] No virtual environment specified, using system Python libraries" << std::endl;
-    } else if (!exists(params["venv"].get<path>())) {
+      char *venv_path = getenv("VIRTUAL_ENV");
+      if (venv_path && strlen(venv_path) > 0) {
+        std::cerr << "[Python] Using virtual environment from VIRTUAL_ENV shell var: " << venv_path << std::endl;
+        params["venv"] = std::string(venv_path);
+      } else {
+        std::cerr << "[Python] No virtual environment specified, using system Python libraries" << std::endl;
+        return;
+      }
+    } 
+
+    if (!exists(params["venv"].get<path>())) {
       throw std::runtime_error("Virtual environment does not exist: " + params["venv"].get<std::string>());
     } else {
-      std::cerr << "[Python] Using virtual environment: " << params["venv"].get<std::string>() << std::endl;
       path venv = params["venv"].get<path>();
       path lib = venv / "lib";
       path site_packages;

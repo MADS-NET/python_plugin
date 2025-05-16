@@ -120,14 +120,6 @@ int main(int argc, char const *argv[]) {
   PythonSourcePlugin plugin;
   json output, params;
 
-  // Set example values to params
-  char *venv_path = getenv("VIRTUAL_ENV");
-  if (venv_path && strlen(venv_path) > 0) {
-    cerr << "Using virtual environment from VIRTUAL_ENV shell var: " << venv_path << endl;
-    params["venv"] = venv_path;
-  } else {
-    cerr << "No virtual environment found. Using system Python." << endl;
-  }
   params["python_module"] = "serial_in";
   if (argc < 2) {
     cerr << "Usage: " << argv[0] << " <serial_port>" << endl;
@@ -153,19 +145,10 @@ int main(int argc, char const *argv[]) {
   PythonSourcePlugin plugin;
   json output, params;
 
-  // Set example values to params
-  char *venv_path = getenv("VIRTUAL_ENV");
-  if (venv_path && strlen(venv_path) > 0) {
-    cerr << "Using virtual environment from VIRTUAL_ENV shell var: " << venv_path << endl;
-    params["venv"] = venv_path;
-  } else {
-    cerr << "No virtual environment found. Using system Python." << endl;
-  }
   params["python_module"] = "source";
   if (argc > 1) {
     params["python_module"] = argv[1];
   }
-
   // Set the parameters
   plugin.set_params(&params);
 

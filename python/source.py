@@ -1,4 +1,11 @@
 import json
+import random 
+import time
+from datetime import datetime
+import serial
+# import mfrc522
+
+print("[Python] Starting source...")
 
 # This is an optional function that is called once, when the script is loaded.
 # Use it for exampleto open a serial port connection.
