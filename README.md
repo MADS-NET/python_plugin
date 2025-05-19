@@ -1,3 +1,9 @@
+# SUPERSEDED
+
+**NOTE**: on Linux, I could not find a solution for loading Python venv libraries when the plugin is loaded via dlopen. For this reason, this plugin is **now superseded** by <https://github.com/MADS-Net/python_agen>, a monolithic agent that embeds a python3 interpreter.
+
+---
+
 # python plugins for MADS
 
 This is a collection of plugins for [MADS](https://github.com/MADS-NET/MADS). The project creates the plugins `python_source.plugin`, `python_filter.plugin`, and `python_sink.plugin`.
