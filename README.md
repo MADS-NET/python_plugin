@@ -1,6 +1,6 @@
 # SUPERSEDED
 
-**NOTE**: on Linux, I could not find a solution for loading Python venv libraries when the plugin is loaded via dlopen. For this reason, this plugin is **now superseded** by <https://github.com/MADS-Net/python_agen>, a monolithic agent that embeds a python3 interpreter.
+**NOTE**: on Linux, I could not find a solution for loading Python venv libraries when the plugin is loaded via dlopen. For this reason, this plugin is **now superseded** by <https://github.com/MADS-Net/python_agent>, a monolithic agent that embeds a python3 interpreter.
 
 ---
 
